@@ -9,19 +9,24 @@ function getDelay() {
     return Math.floor(Math.random() * 20);
 }
 
+function checkResponse(response){
+    if (response)
+        try {
+            console.log("TODO SALIO BIEN");
+            return response.json();
+        } catch (error) {
+            console.log(error);
+        }
+}
+
 async function fetchData() {
     
     const promiseTwitter = new Promise((resolve, reject) => {
         const delay = getDelay();
         setTimeout(() => {
             const result = fetch('http://codefight.davidbanham.com/twitter').then((response) => {
-                if (response)
-                    try {
-                        console.log("TODO SALIO BIEN");
-                        return response.json();
-                    } catch (error) {
-                        console.log(error);
-                    }
+                return checkResponse(response);
+                
             });
             resolve(result);
         }, delay);
@@ -29,7 +34,7 @@ async function fetchData() {
 
 
     const promiseFacebook = new Promise((resolve, reject) => {
-        const delay = getDelay;
+        const delay = getDelay();
         setTimeout(() => {
             const result = fetch('http://codefight.davidbanham.com/facebook').then((response) => {
                 if (response)
@@ -37,6 +42,7 @@ async function fetchData() {
                         console.log("TODO SALIO BIEN");
                         return response.json();
                     } catch (error) {
+                        console.log("HUBO UN ERROR en FACEBOOK");
                         console.log(error);
                     }
             });
@@ -44,12 +50,22 @@ async function fetchData() {
         }, delay);
     });
 
-    /*       const promiseInstagram = new Promise((resolve, reject) => {
-            setTimeout(() => {
-              const newValue = Math.floor(Math.random() * 20);
-              resolve(newValue);
-            }, newValue);
-          }); */
+    const promiseInstagram = new Promise((resolve, reject) => {
+        const delay = getDelay();
+        setTimeout(() => {
+            const result = fetch('http://codefight.davidbanham.com/instagram').then((response) => {
+                if (response)
+                    try {
+                        console.log("TODO SALIO BIEN");
+                        return response.json();
+                    } catch (error) {
+                        console.log("HUBO UN ERROR en INSTAGRAM");
+                        console.log(error);
+                    }
+            });
+            resolve(result);
+        }, delay);
+    });
 
     Promise.all([promiseTwitter, promiseFacebook]).then(values => {
         let responseObj = new Object();
@@ -60,9 +76,7 @@ async function fetchData() {
 
         console.log("VALUES" + valuesStrin);
 
-        twitterResponseObj = JSON.parse(valuesStrin);
-
-        console.log("TW RESPONSE OBJ" + twitterResponseObj);
+        twitterResponseObj = JSON.parse(valuesStrin);   
 
         twitterResponseObj.forEach(tweet => {
             responseObj.twitter.push(tweet.tweet);
