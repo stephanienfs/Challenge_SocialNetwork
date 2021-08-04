@@ -50,11 +50,9 @@ async function fetchData() {
             fetch('http://codefight.davidbanham.com/twitter').then(response => {
                 return response.json();
             }).then(data => {
-                console.log(data);
                 resolve(data);
             }).catch(error => {
                 console.log("-------------- HUBO UN ERROR TWITTER -------------");
-        
                 console.log(error);
                 return error;
             });
@@ -70,7 +68,6 @@ async function fetchData() {
             fetch('http://codefight.davidbanham.com/facebook').then(response => {
                 return response.json();
             }).then(data => {
-                console.log(data);
                 resolve(data);
             }).catch(error => {
                 console.log("-------------- HUBO UN ERROR FACBEOOK -------------");
@@ -88,7 +85,6 @@ async function fetchData() {
             fetch('http://codefight.davidbanham.com/instagram').then(response => {
                 return response.json();
             }).then(data => {
-                console.log(data);
                 resolve(data);
             }).catch(error => {
                 console.log("-------------- HUBO UN ERROR INSTAGRAM-------------");
@@ -111,7 +107,7 @@ async function fetchData() {
         if(values[1])
             facebookResponseObj = getObj(values[1], 'status');
         if(values[2])
-            instagramResponseObj = getObj(values[2], 'photos');
+            instagramResponseObj = getObj(values[2], 'picture');
 
         responseObj.twitter = twitterResponseObj; // responseObj = {twtter: [{tweet: ..}]}
         responseObj.facebook = facebookResponseObj;
