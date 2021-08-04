@@ -16,6 +16,7 @@ async function fetchData() {
             const result = fetch('http://codefight.davidbanham.com/twitter').then((response) => response.json());
             resolve(result);
         }, delay);
+        console.log("ESTO FUE UN", resolve, reject);
     });
 
     
@@ -38,11 +39,15 @@ async function fetchData() {
         let responseObj = new Object();
         let twitterResponseObj = new Object();
         let facebookResponseObj = new Object();
-        
+        valuesStrin = JSON.stringify(values[0]);    
         responseObj.twitter = [];
-        console.log("VALUES" + values[1]);
-        twitterResponseObj = JSON.parse(values[1]);
+
+        console.log("VALUES" + valuesStrin);
+
+        twitterResponseObj = JSON.parse(valuesStrin);
+
         console.log("TW RESPONSE OBJ" + twitterResponseObj);
+
         twitterResponseObj.forEach(tweet => {
             responseObj.twitter.push(tweet.tweet);
         });
