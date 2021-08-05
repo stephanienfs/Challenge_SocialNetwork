@@ -135,18 +135,22 @@ const server = http.createServer();
 
 server.on('request', async (req, res) => {
 
-    let response = await fetchData();
+    fetchData().then((data) => {
 
-    console.log('----response\n' + JSON.stringify(response));
+        if (data.error) {
 
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 500;
 
-    // Check if JSON, and return without JSON.stringify
-    if(isJson(response))
-        res.end(JSON.stringify(response));
-    else
-        res.end(response);
+        } else {
+
+            res.statusCode = 200;
+
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(data));
+
+    });
 
 });
 
