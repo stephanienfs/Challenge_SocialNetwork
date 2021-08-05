@@ -9,7 +9,7 @@ function getDelay() {
     return Math.floor(Math.random() * 20);
 }
 
-function getObj(values, attrName) {
+function createSocialNetworkObject(values, attrName) {
 
     let networkResponseArr = new Array();
 
@@ -47,18 +47,16 @@ async function fetchData() {
         const delay = getDelay();
         setTimeout(() => {
 
-            fetch('http://codefight.davidbanham.com/twitter').then( response => {
-                if (!response.ok) { 
-                    return response;
-                }
-                return response.json()  //we only get here if there is no error
-              })
-              .then( data => {
-               resolve(data) 
-              })
-              .catch( err => {
-                return reject(err);
-              });
+            fetch('http://codefight.davidbanham.com/twitter')
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    resolve(data)
+                })
+                .catch(err => {
+                    reject(err);
+                });
         }, delay);
     });
 
@@ -67,71 +65,69 @@ async function fetchData() {
         const delay = getDelay();
         setTimeout(() => {
 
-            fetch('http://codefight.davidbanham.com/facebook').then(response => {
-                if (!response.ok) { 
-                    return response;
-                }
-                return response.json()  //we only get here if there is no error
-              })
-              .then( data => {
-               resolve(data) 
-              })
-              .catch( err => {
-                return reject(err);
-              });
+            fetch('http://codefight.davidbanham.com/facebook')
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    resolve(data)
+                })
+                .catch(err => {
+                    reject(err);
+                });
         }, delay);
-     });
- 
-     const promiseInstagram = new Promise((resolve, reject) => {
+    });
+
+    const promiseInstagram = new Promise((resolve, reject) => {
         const delay = getDelay();
         setTimeout(() => {
 
-            fetch('http://codefight.davidbanham.com/instagram').then(response => {
-                if (!response.ok) { 
-                    return response;
-                }
-                return response.json()  
-              })
-              .then( data => {
-               resolve(data) 
-              })
-              .catch( err => {
-                return reject(err);
-              });
+            fetch('http://codefight.davidbanham.com/instagram')
+                .then(response => {
+                    return response.json()
+                })
+                .then(data => {
+                    resolve(data);
+                })
+                .catch(err => {
+                    reject(err);
+                });
         }, delay);
-     }); 
+    });
 
-    return Promise.all([promiseTwitter, promiseFacebook, promiseInstagram]).then(values => {
+    return Promise.all([promiseTwitter, promiseFacebook, promiseInstagram])
+        .then(values => {
 
-        let responseObj = new Object(); // responseObj = {}
-        let twitterResponseObj = new Object(); // twitterResponseObj = {}
-        let facebookResponseObj = new Object(); // facebookResponseObj = {}
-        let instagramResponseObj = new Object();  // instagramResponseObj = {}
+            let responseObj = new Object();
+            let twitterResponseObj = new Object();
+            let facebookResponseObj = new Object();
+            let instagramResponseObj = new Object();
 
-        if(values[0])
-            twitterResponseObj = getObj(values[0], 'tweet'); // twitterResponseObj = [{tweet: ...}, {tweet: ...}]
-        if(values[1])
-            facebookResponseObj = getObj(values[1], 'status');
-        if(values[2])
-            instagramResponseObj = getObj(values[2], 'picture');
 
-        responseObj.twitter = twitterResponseObj; 
-        responseObj.facebook = facebookResponseObj;
-        responseObj.instagram = instagramResponseObj;
+            twitterResponseObj = createSocialNetworkObject(values[0], 'tweet');
+            facebookResponseObj = createSocialNetworkObject(values[1], 'status');
+            instagramResponseObj = createSocialNetworkObject(values[2], 'picture');
 
-        console.log("THIS IS THE RESULT FOR RESPONSE--------------------\n");
-        console.log(responseObj); 
+            responseObj.twitter = twitterResponseObj;
+            responseObj.facebook = facebookResponseObj;
+            responseObj.instagram = instagramResponseObj;
 
-        return JSON.stringify(responseObj);
-    }).catch(error => {
-        errorObj = new Object();
-        errorObj.Error = '500 (Internal Server Error)';
-        console.log(errorObj);
-        return JSON.stringify(errorObj);
-    });;
+            return responseObj;
+        }).catch(error => {
+            errorObj = new Object();
+            errorObj.error = new Object();
+            errorObj.error.code = '500';
+            errorObj.error.message = 'Internal Server Error';
+
+            return errorObj;
+        });;
 }
 
 const server = http.createServer();
+
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
 
 server.on('request', async (req, res) => {
 
@@ -152,8 +148,4 @@ server.on('request', async (req, res) => {
 
     });
 
-});
-
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
 });
