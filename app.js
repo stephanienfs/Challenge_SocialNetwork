@@ -47,34 +47,38 @@ async function fetchData() {
         const delay = getDelay();
         setTimeout(() => {
 
-            fetch('http://codefight.davidbanham.com/twitter').then(response => {
-                return response.json();
-            }).then(data => {
-                resolve(data);
-            }).catch(error => {
-                console.log("-------------- HUBO UN ERROR TWITTER -------------");
-                console.log(error);
-                return error;
-            });
-
+            fetch('http://codefight.davidbanham.com/twitter').then( response => {
+                if (!response.ok) { 
+                    return response;
+                }
+                return response.json()  //we only get here if there is no error
+              })
+              .then( data => {
+               resolve(data) 
+              })
+              .catch( err => {
+                return reject(err);
+              });
         }, delay);
     });
 
 
-      const promiseFacebook = new Promise((resolve, reject) => {
+    const promiseFacebook = new Promise((resolve, reject) => {
         const delay = getDelay();
         setTimeout(() => {
 
             fetch('http://codefight.davidbanham.com/facebook').then(response => {
-                return response.json();
-            }).then(data => {
-                resolve(data);
-            }).catch(error => {
-                console.log("-------------- HUBO UN ERROR FACBEOOK -------------");
-                console.log(error);
-                return error;
-            });
-
+                if (!response.ok) { 
+                    return response;
+                }
+                return response.json()  //we only get here if there is no error
+              })
+              .then( data => {
+               resolve(data) 
+              })
+              .catch( err => {
+                return reject(err);
+              });
         }, delay);
      });
  
@@ -83,25 +87,27 @@ async function fetchData() {
         setTimeout(() => {
 
             fetch('http://codefight.davidbanham.com/instagram').then(response => {
-                return response.json();
-            }).then(data => {
-                resolve(data);
-            }).catch(error => {
-                console.log("-------------- HUBO UN ERROR INSTAGRAM-------------");
-                console.log(error);
-                return error;
-            });
-
+                if (!response.ok) { 
+                    return response;
+                }
+                return response.json()  
+              })
+              .then( data => {
+               resolve(data) 
+              })
+              .catch( err => {
+                return reject(err);
+              });
         }, delay);
      }); 
 
-    return Promise.all([promiseTwitter,promiseFacebook,promiseInstagram]).then(values => {
+    return Promise.all([promiseTwitter, promiseFacebook, promiseInstagram]).then(values => {
 
         let responseObj = new Object(); // responseObj = {}
         let twitterResponseObj = new Object(); // twitterResponseObj = {}
         let facebookResponseObj = new Object(); // facebookResponseObj = {}
         let instagramResponseObj = new Object();  // instagramResponseObj = {}
-      
+
         if(values[0])
             twitterResponseObj = getObj(values[0], 'tweet'); // twitterResponseObj = [{tweet: ...}, {tweet: ...}]
         if(values[1])
@@ -109,7 +115,7 @@ async function fetchData() {
         if(values[2])
             instagramResponseObj = getObj(values[2], 'picture');
 
-        responseObj.twitter = twitterResponseObj; // responseObj = {twtter: [{tweet: ..}]}
+        responseObj.twitter = twitterResponseObj; 
         responseObj.facebook = facebookResponseObj;
         responseObj.instagram = instagramResponseObj;
 
@@ -117,20 +123,12 @@ async function fetchData() {
         console.log(responseObj); 
 
         return JSON.stringify(responseObj);
-    });
-
-    /* try {
-        const results = await Promise.allSettled(
-            [
-                fetch('http://codefight.davidbanham.com/twitter').then((response) => response.json()),
-                fetch('http://codefight.davidbanham.com/facebook').then((response) => response.json()),
-                fetch('http://codefight.davidbanham.com/instagram').then((response) => response.json()),
-            ]
-        );
-        console.log(results);
-    } catch (error) {
-        console.log(error);
-    } */
+    }).catch(error => {
+        errorObj = new Object();
+        errorObj.Error = '500 (Internal Server Error)';
+        console.log(errorObj);
+        return JSON.stringify(errorObj);
+    });;
 }
 
 const server = http.createServer();
